@@ -1,5 +1,6 @@
-import { Article } from '../components/ArticleGrid';
-import { HorizontalArticle } from '../components/HorizontalArticleCard';
+// import { Article } from '../components/ArticleGrid';
+ import { Article } from '../src/components/ArticleGrid'
+import { HorizontalArticle } from '../src/components/HorizontalArticleCard';
 
 export const sampleArticles: Article[] = [
   {
