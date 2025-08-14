@@ -6,19 +6,13 @@ import {
   CardMedia,
   CardContent,
   Chip,
-  Grid,
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import {
-  AccessTime,
-  ChatBubbleOutline,
-  Person
-} from '@mui/icons-material';
+import { ChatBubbleOutline } from '@mui/icons-material';
 import AdBanner from './AdBanner';
 import PremierLeagueRankings from './PremierLeagueRankings';
 import HorizontalArticleCard from './HorizontalArticleCard';
-import { horizontalArticles } from '../../data/sampleArticles';
 
 export interface Article {
   id: string;
@@ -43,24 +37,24 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Calculate dimensions based on requirements
-  const cardDimensions = featured
+  // Responsive kích thước
+  const sizes = featured
     ? {
-        width: isMobile ? '100%' : '680px',
-        height: isMobile ? 'auto' : '580px',
-        imageHeight: isMobile ? 200 : 320
+        cardW: { xs: '100%', md: '680px' },
+        cardH: { xs: 'auto', md: 'auto' },        // 👈 cho phép nở theo nội dung
+        imgH: { xs: 200, sm: 240, md: 320 }
       }
     : {
-        width: isMobile ? '100%' : '330px',
-        height: isMobile ? 'auto' : '408px',
-        imageHeight: isMobile ? 150 : 220
+        cardW: { xs: '100%', md: '330px' },
+        cardH: { xs: 'auto', md: 'auto' },        // 👈 cho phép nở theo nội dung
+        imgH: { xs: 130, sm: 150, md: 180 }
       };
 
   return (
     <Card
       sx={{
-        width: cardDimensions.width,
-        height: cardDimensions.height,
+        width: sizes.cardW,
+        height: sizes.cardH,
         bgcolor: '#1f2c39',
         border: '1px solid #40444b',
         borderRadius: 2,
@@ -76,80 +70,78 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
         }
       }}
     >
-      {/* Article Image */}
       <CardMedia
         component="img"
-        height={cardDimensions.imageHeight}
         image={article.imageUrl}
         alt={article.title}
         sx={{
+          height: sizes.imgH,
           objectFit: 'cover',
           transition: 'transform 0.3s ease-in-out',
           flexShrink: 0,
-          '&:hover': {
-            transform: 'scale(1.05)'
-          }
+          '&:hover': { transform: 'scale(1.05)' }
         }}
       />
 
       <CardContent
         sx={{
-          p: featured ? 3 : 2,
+          pt: '12px',
+          pr: featured ? 3 : 2,
+          pl: featured ? 3 : 2,
+
+          // đặt pb theo responsive
+          pb: { xs: '16px', sm: '16px', md: '16px' },
+
+          // QUAN TRỌNG: override rule mặc định :last-child của MUI
+          '&:last-child': {
+            pb: { xs: '16px', sm: '16px', md: '16px' },
+          },
+
           bgcolor: '#1f2c39',
           color: 'white',
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          minHeight: 0 // Ensure proper flex behavior
+          minHeight: 0,
         }}
       >
-        {/* Content Top Section */}
-        <Box sx={{ flex: 1 }}>
-          {/* Tags */}
+        {/* Bọc phần trên và để grow */}
+        <Box sx={{ flexGrow: 1 }}>
+          {/* Author & Time */}
           <Box
             sx={{
               display: 'flex',
-              gap: 1,
-              mb: 2,
-              flexWrap: 'wrap'
+              alignItems: 'center',
+              gap: { xs: 1, md: 2 },
+              flexWrap: { xs: 'wrap', md: 'nowrap' },
+              pb: 1,
+              mb: '12px',
+              borderBottom: '1px solid rgba(255,255,255,0.2)'
             }}
           >
-            {article.tags.slice(0, featured ? 3 : 2).map((tag, index) => (
-              <Chip
-                key={index}
-                label={tag}
-                size="small"
-                sx={{
-                  bgcolor: 'rgba(0, 212, 170, 0.2)',
-                  color: '#00d4aa',
-                  border: '1px solid rgba(0, 212, 170, 0.3)',
-                  fontSize: '0.7rem',
-                  height: 24,
-                  '&:hover': {
-                    bgcolor: 'rgba(0, 212, 170, 0.3)'
-                  }
-                }}
-              />
-            ))}
+            <Typography variant="caption" sx={{ color: '#E8E8E8', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {article.author}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#E8E8E8', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+              {article.publishedAt}
+            </Typography>
           </Box>
 
           {/* Title */}
           <Typography
             variant={featured ? 'h5' : 'h6'}
             sx={{
-              color: 'white',
+              color: '#FFFFFF',
               fontWeight: 700,
-              mb: 2,
+              mb: '5px',
               fontSize: featured
-                ? { xs: '1.3rem', md: '1.5rem' }
-                : { xs: '1rem', md: '1.1rem' },
+                ? { xs: '1.2rem', sm: '1.1rem', md: '1rem', lg: '1rem' }
+                : { xs: '1rem', sm: '1rem', md: '1rem', lg: '1rem' },
               lineHeight: 1.3,
-              display: '-webkit-box',
-              WebkitLineClamp: featured ? 2 : 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              whiteSpace: 'normal',
+              overflow: 'visible',
+              wordBreak: 'break-word'
             }}
           >
             {article.title}
@@ -159,9 +151,9 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
           <Typography
             variant="body2"
             sx={{
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: '#FFFFFF',
               mb: 2,
-              fontSize: featured ? '0.95rem' : '0.85rem',
+              fontSize: featured ? '0.95rem' : '0.875rem',
               lineHeight: 1.5,
               display: '-webkit-box',
               WebkitLineClamp: featured ? 3 : 2,
@@ -174,155 +166,95 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
           </Typography>
         </Box>
 
-        {/* Meta Information - Always at bottom */}
+        {/* Tag & Comment — Luôn nằm dưới */}
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            pt: 2,
-            mt: 'auto', // Push to bottom
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            flexShrink: 0 // Prevent shrinking
+            mt: 'auto' // đẩy xuống đáy
           }}
         >
-          {/* Left side - Author and Time */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: { xs: 1, md: 2 },
-              flex: 1,
-              flexWrap: { xs: 'wrap', md: 'nowrap' }
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                minWidth: 0 // Allow text truncation
-              }}
-            >
-              <Person sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.6)', flexShrink: 0 }} />
-              <Typography
-                variant="caption"
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            {article.tags.slice(0, featured ? 3 : 2).map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                size="small"
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '0.7rem',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
+                  bgcolor: 'rgba(0, 212, 170, 0.2)',
+                  color: '#00d4aa',
+                  border: '1px solid rgba(0, 212, 170, 0.3)',
+                  fontSize: '0.75rem',
+                  height: 24,
+                  borderRadius: '8px', 
+                  '&:hover': { 
+                    bgcolor: 'rgba(0, 212, 170, 0.3)',
+                    color: '#ffffff', 
+                    borderColor: '#00d4aa'
+                  }
                 }}
-              >
-                {article.author}
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                minWidth: 0 // Allow text truncation
-              }}
-            >
-              <AccessTime sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.6)', flexShrink: 0 }} />
-              <Typography
-                variant="caption"
-                sx={{
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '0.7rem',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {article.publishedAt}
-              </Typography>
-            </Box>
+              />
+            ))}
           </Box>
-
-          {/* Right side - Comments */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-              flexShrink: 0
-            }}
-          >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <ChatBubbleOutline sx={{ fontSize: 16, color: '#00d4aa' }} />
-            <Typography
-              variant="caption"
-              sx={{
-                color: '#00d4aa',
-                fontSize: '0.7rem',
-                fontWeight: 600
-              }}
-            >
+            <Typography variant="caption" sx={{ color: '#00d4aa', fontSize: '0.7rem', fontWeight: 600 }}>
               {article.commentCount}
             </Typography>
           </Box>
         </Box>
       </CardContent>
+
     </Card>
   );
 };
 
 const ArticleGrid: React.FC<ArticleGridProps> = ({ articles }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const featuredArticle =
+    articles.find(a => a.priority === 1) ?? articles[0];
+  const remainder = featuredArticle
+    ? articles.filter(a => a.id !== featuredArticle.id)
+    : articles;
+  const gridArticles = remainder.slice(0, 4);
+  const listArticles = remainder.slice(4);
 
-  // Separate featured article (priority 1) from regular articles
-  const featuredArticle = articles.find(article => article.priority === 1);
-  // Filter regular articles to show only first 4
-  const regularArticles = articles.filter(article => article.priority !== 1).slice(0, 4);
+  if (!articles || articles.length === 0) {
+    return (
+      <Box sx={{ width: '100%', mt: 3, mb: 4 }}>
+        <Typography color="white" variant="body1">
+          Chưa có bài viết để hiển thị.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        mt: 3,
-        mb: 4
-      }}
-    >
-      {/* Featured Article - 680px × 580px */}
+    <Box sx={{ width: '100%', mt: 3, mb: 4 }}>
       {featuredArticle && (
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'flex-start' }}>
-          <ArticleCard article={featuredArticle} featured={true} />
+          <ArticleCard article={featuredArticle} featured />
         </Box>
       )}
 
-      {/* Regular Articles Grid - 2 articles per row, each 330px × 408px */}
-      {regularArticles.length > 0 && (
+      {gridArticles.length > 0 && (
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(2, 330px)'
-            },
-            gap: { xs: 2, md: 2 },
-            justifyContent: { xs: 'center', md: 'flex-start' },
-            width: '100%',
-            maxWidth: { md: '680px' }, // Ensure it fits within the articles section
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 2,
+            maxWidth: { md: '680px' },
             mb: 4
           }}
         >
-          {regularArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+          {gridArticles.map(a => (
+            <ArticleCard key={a.id} article={a} />
           ))}
         </Box>
       )}
 
-      {/* Advertisement Banner Section - 640px × 260px */}
       <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          mb: 4
-        }}
+        sx={{ width: '100%', display: 'flex', justifyContent: 'center', mb: 4 }}
       >
         <AdBanner
           title="Football247 Premium"
@@ -332,28 +264,17 @@ const ArticleGrid: React.FC<ArticleGridProps> = ({ articles }) => {
         />
       </Box>
 
-      {/* Premier League Stats & Rankings Section */}
-      <Box
-        sx={{
-          width: '100%',
-          mb: 4
-        }}
-      >
+      <Box sx={{ width: '100%', mb: 4 }}>
         <PremierLeagueRankings />
       </Box>
 
-      {/* Additional Articles List Section */}
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: { md: '680px' },
-          mb: 4
-        }}
-      >
-        {horizontalArticles.map((article) => (
-          <HorizontalArticleCard key={article.id} article={article} />
-        ))}
-      </Box>
+      {listArticles.length > 0 && (
+        <Box sx={{ width: '100%', maxWidth: { md: '680px' }, mb: 4 }}>
+          {listArticles.map(a => (
+            <HorizontalArticleCard key={a.id} article={a} />
+          ))}
+        </Box>
+      )}
     </Box>
   );
 };
