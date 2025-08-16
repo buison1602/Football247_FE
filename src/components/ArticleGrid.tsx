@@ -221,7 +221,7 @@ const ArticleGrid: React.FC<ArticleGridProps> = ({ articles }) => {
 
   if (!articles || articles.length === 0) {
     return (
-      <Box sx={{ width: '100%', mt: 3, mb: 4 }}>
+      <Box sx={{ width: '100%', mt: 0, mb: 4 }}>
         <Typography color="white" variant="body1">
           Chưa có bài viết để hiển thị.
         </Typography>
@@ -230,7 +230,7 @@ const ArticleGrid: React.FC<ArticleGridProps> = ({ articles }) => {
   }
 
   return (
-    <Box sx={{ width: '100%', mt: 3, mb: 4 }}>
+    <Box sx={{ width: '100%', mt: 0, mb: 4 }}>
       {featuredArticle && (
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'flex-start' }}>
           <ArticleCard article={featuredArticle} featured />

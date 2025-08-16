@@ -242,7 +242,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
   };
 
   const handleGoogleSignIn = () => {
-    console.log(`Google ${mode === 'login' ? 'Sign In' : 'Sign Up'} clicked`);
+    console.log(`Google ${mode === 'login' ? 'Log In' : 'Sign Up'} clicked`);
     // TODO: Implement Google OAuth integration
     // This would typically involve:
     // 1. Initialize Google OAuth client
@@ -344,109 +344,61 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
                 }}
               >
                 {mode === 'login'
-                  ? 'Sign in to access exclusive football content and updates'
+                  ? 'Log in to access exclusive football content and updates'
                   : 'Create your account to get personalized football news and insights'
                 }
               </Typography>
             </Box>
 
             {/* Modern Segmented Control Toggle */}
-            <Box
-              sx={{
-                position: 'relative',
-                display: 'flex',
-                bgcolor: '#1f2c39',
-                borderRadius: 2.5,
-                p: 0.4,
-                mb: 3,
-                maxWidth: '330px',
-                mx: 'auto',
-                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                overflow: 'hidden'
-              }}
-            >
-              {/* Sliding Indicator/Pill */}
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '4px',
-                  left: mode === 'login' ? '4px' : 'calc(50% - 2px)',
-                  width: 'calc(50% - 4px)',
-                  height: 'calc(100% - 8px)',
-                  bgcolor: '#00d4aa',
-                  borderRadius: 2,
-                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 2px 8px rgba(0, 212, 170, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3)',
-                  background: 'linear-gradient(135deg, #00d4aa 0%, #00b894 100%)',
-                  zIndex: 1
-                }}
-              />
+<Box
+  sx={{
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 0.5,
+    bgcolor: '#1f2c39',
+    borderRadius: '999px',
+    p: 0.4,
+    mb: 3,
+    mx: 'auto',
+    boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    overflow: 'hidden'
+  }}
+>
+  {['login', 'signup'].map((item) => (
+    <Button
+      key={item}
+      onClick={() => setMode(item as 'login' | 'signup')}
+      sx={{
+        px: 2.5, // 👈 padding ngang để nút dài hơn chữ 1 chút
+        py: 0.5, // 👈 padding dọc nhỏ
+        height: 32,
+        minWidth: 'unset', // 👈 không cho width cố định
+        whiteSpace: 'nowrap',
+        bgcolor: mode === item ? '#00d4aa' : 'transparent',
+        color: mode === item ? 'white' : 'rgba(255, 255, 255, 0.7)',
+        fontWeight: mode === item ? 600 : 500,
+        borderRadius: '999px',
+        textTransform: 'none',
+        fontSize: '0.9rem',
+        transition: 'all 0.2s ease-in-out',
+        '&:hover': {
+          bgcolor: mode === item ? '#00d4aa' : 'rgba(255, 255, 255, 0.05)',
+          color: 'white',
+          transform: 'scale(1.02)'
+        },
+        '&:active': {
+          transform: 'scale(0.98)'
+        }
+      }}
+    >
+      {item === 'login' ? 'Log In' : 'Sign Up'}
+    </Button>
+  ))}
+</Box>
 
-              {/* Login Button */}
-              <Button
-                onClick={() => setMode('login')}
-                sx={{
-                  flex: 1,
-                  py: 0.6,
-                  px: 2,
-                  bgcolor: 'transparent',
-                  color: mode === 'login' ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  fontWeight: mode === 'login' ? 600 : 500,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontSize: '0.85rem',
-                  minHeight: '28px',
-                  position: 'relative',
-                  zIndex: 2,
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    bgcolor: 'transparent',
-                    color: mode === 'login' ? 'white' : 'rgba(255, 255, 255, 0.9)',
-                    transform: 'scale(1.02)',
-                    textShadow: mode === 'login' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
-                  },
-                  '&:active': {
-                    transform: 'scale(0.98)',
-                    transition: 'transform 0.1s ease-in-out'
-                  }
-                }}
-              >
-                Login
-              </Button>
-
-              {/* Sign Up Button */}
-              <Button
-                onClick={() => setMode('signup')}
-                sx={{
-                  flex: 1,
-                  py: 0.6,
-                  px: 2,
-                  bgcolor: 'transparent',
-                  color: mode === 'signup' ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  fontWeight: mode === 'signup' ? 600 : 500,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontSize: '0.85rem',
-                  minHeight: '28px',
-                  position: 'relative',
-                  zIndex: 2,
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    bgcolor: 'transparent',
-                    color: mode === 'signup' ? 'white' : 'rgba(255, 255, 255, 0.9)',
-                    transform: 'scale(1.02)',
-                    textShadow: mode === 'signup' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
-                  },
-                  '&:active': {
-                    transform: 'scale(0.98)',
-                    transition: 'transform 0.1s ease-in-out'
-                  }
-                }}
-              >
-                Sign Up
-              </Button>
-            </Box>
 
             {/* Error Alert */}
             {errors.general && (
@@ -716,7 +668,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
                 {loading ? (
                   <CircularProgress size={24} sx={{ color: 'white' }} />
                 ) : (
-                  mode === 'login' ? 'Sign In' : 'Create Account'
+                  mode === 'login' ? 'Log In' : 'Create Account'
                 )}
               </Button>
 
@@ -786,7 +738,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
                 }}
               >
                 <GoogleIcon sx={{ fontSize: 20 }} />
-                {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+                {mode === 'login' ? 'Log in with Google' : 'Sign up with Google'}
               </Button>
             </Box>
           </Box>
