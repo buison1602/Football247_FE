@@ -13,6 +13,8 @@ import { ChatBubbleOutline } from '@mui/icons-material';
 import AdBanner from './AdBanner';
 import PremierLeagueRankings from './PremierLeagueRankings';
 import HorizontalArticleCard from './HorizontalArticleCard';
+import ArticleSchema from './ArticleSchema';
+import { formatDateForDateTime } from '../utils/date';
 
 export interface Article {
   id: string;
@@ -20,7 +22,8 @@ export interface Article {
   description: string;
   imageUrl: string;
   tags: string[];
-  publishedAt: string;
+  publishedAt: string; // Human-readable format (e.g., "2 hours ago")
+  publishedAtRaw: string | null; // Original date string from API for datetime attribute
   author: string;
   commentCount: number;
   priority?: number; // 1 for featured article
@@ -51,29 +54,34 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
       };
 
   return (
-    <Card
-      sx={{
-        width: sizes.cardW,
-        height: sizes.cardH,
-        bgcolor: '#1f2c39',
-        border: '1px solid #40444b',
-        borderRadius: 2,
-        overflow: 'hidden',
-        transition: 'all 0.3s ease-in-out',
-        cursor: 'pointer',
-        display: 'flex',
-        flexDirection: 'column',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-          borderColor: '#00d4aa'
-        }
-      }}
-    >
+    <>
+      {/* Add structured data for SEO */}
+      <ArticleSchema article={article} featured={featured} />
+
+      <Card
+        component="article" // Semantic HTML for better SEO
+        sx={{
+          width: sizes.cardW,
+          height: sizes.cardH,
+          bgcolor: '#1f2c39',
+          border: '1px solid #40444b',
+          borderRadius: 2,
+          overflow: 'hidden',
+          transition: 'all 0.3s ease-in-out',
+          cursor: 'pointer',
+          display: 'flex',
+          flexDirection: 'column',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            borderColor: '#00d4aa'
+          }
+        }}
+      >
       <CardMedia
         component="img"
         image={article.imageUrl}
-        alt={article.title}
+        alt={`${article.title} - Football247 News`} // More descriptive alt text for SEO
         sx={{
           height: sizes.imgH,
           objectFit: 'cover',
@@ -120,16 +128,26 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
               borderBottom: '1px solid rgba(255,255,255,0.2)'
             }}
           >
-            <Typography variant="caption" sx={{ color: '#E8E8E8', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {article.author}
+            <Typography
+              component="span"
+              variant="caption"
+              sx={{ color: '#E8E8E8', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
+              By {article.author}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#E8E8E8', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+            <Typography
+              component="time"
+              variant="caption"
+              dateTime={formatDateForDateTime(article.publishedAtRaw)}
+              sx={{ color: '#E8E8E8', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+            >
               {article.publishedAt}
             </Typography>
           </Box>
 
-          {/* Title */}
+          {/* Title with proper semantic heading */}
           <Typography
+            component={featured ? "h1" : "h2"} // Proper heading hierarchy for SEO
             variant={featured ? 'h5' : 'h6'}
             sx={{
               color: '#FFFFFF',
@@ -147,8 +165,9 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
             {article.title}
           </Typography>
 
-          {/* Description */}
+          {/* Description with semantic paragraph */}
           <Typography
+            component="p" // Semantic paragraph for better SEO
             variant="body2"
             sx={{
               color: '#FFFFFF',
@@ -207,6 +226,7 @@ const ArticleCard: React.FC<{ article: Article; featured?: boolean }> = ({
       </CardContent>
 
     </Card>
+    </>
   );
 };
 

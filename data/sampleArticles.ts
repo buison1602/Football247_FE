@@ -1,5 +1,4 @@
-// import { Article } from '../components/ArticleGrid';
- import { Article } from '../src/components/ArticleGrid'
+import { Article } from '../src/components/ArticleGrid';
 import { HorizontalArticle } from '../src/components/HorizontalArticleCard';
 
 export const sampleArticles: Article[] = [
@@ -10,6 +9,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Premier League', 'Liverpool', 'Arsenal'],
     publishedAt: '23 hours ago',
+    publishedAtRaw: '2025-01-16T14:30:00.000Z', // Static timestamp to prevent hydration mismatch
     author: 'Will Ford',
     commentCount: 37,
     priority: 1 // Featured article
@@ -21,6 +21,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['F365 Features', 'Matheus Cunha'],
     publishedAt: '19 hours ago',
+    publishedAtRaw: '2025-01-16T18:30:00.000Z', // Static timestamp to prevent hydration mismatch
     author: 'Matt Stead',
     commentCount: 71,
   },
@@ -31,6 +32,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Manchester United', 'Marcus Rashford'],
     publishedAt: '12 hours ago',
+    publishedAtRaw: '2025-01-17T01:30:00.000Z', // Static timestamp to prevent hydration mismatch
     author: 'Matt Stead',
     commentCount: 8,
   },
@@ -41,6 +43,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Liverpool', 'Van Dijk'],
     publishedAt: '17 Jul 2025',
+    publishedAtRaw: '2025-07-17T10:00:00.000Z', // Fixed date
     author: 'F-Bot F365',
     commentCount: 65,
   },
@@ -51,6 +54,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Manchester United', 'Big Six'],
     publishedAt: '16 Jul 2025',
+    publishedAtRaw: '2025-07-16T14:30:00.000Z', // Fixed date
     author: 'Ian Watson',
     commentCount: 36,
   },
@@ -61,6 +65,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Barcelona', 'Transfer News'],
     publishedAt: '15 Jul 2025',
+    publishedAtRaw: '2025-07-15T16:45:00.000Z', // Fixed date
     author: 'Transfer Insider',
     commentCount: 42,
   },
@@ -71,6 +76,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Chelsea', 'Transfer News', 'Enzo Maresca'],
     publishedAt: '14 Jul 2025',
+    publishedAtRaw: '2025-07-14T11:20:00.000Z', // Fixed date
     author: 'Chelsea Reporter',
     commentCount: 28,
   },
@@ -81,6 +87,7 @@ export const sampleArticles: Article[] = [
     imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
     tags: ['Tottenham', 'Serie A', 'Postecoglou'],
     publishedAt: '13 Jul 2025',
+    publishedAtRaw: '2025-07-13T09:15:00.000Z', // Fixed date
     author: 'Spurs Insider',
     commentCount: 19,
   }

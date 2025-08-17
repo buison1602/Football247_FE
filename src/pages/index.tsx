@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { Box, Typography } from '@mui/material';
 import MailboxCard from '../components/MailboxCard';
 import MailboxAdBanner from '../components/MailboxAdBanner';
@@ -13,16 +15,16 @@ import Footer from '../components/Footer';
 import { sampleArticles } from '../../data/sampleArticles';
 import { formatPublishedAt } from '../utils/date';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import { useArticles, ArticleDto, fetcher } from '../hooks/useArticles';
 
-interface ArticleDto {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  priority: number;
-  bgrImg: string;
-  createdAt: string;
-  tags: string[];
+// Props interface for HomePage component
+interface HomePageProps {
+  initialArticles?: ArticleDto[];
+  seoData?: {
+    title: string;
+    description: string;
+    featuredImage?: string;
+  };
 }
 
 const mailboxData = [
@@ -59,29 +61,13 @@ const mailboxData = [
   },
 ];
 
-const HomePage = () => {
+const HomePage: React.FC<HomePageProps> = ({ initialArticles, seoData }) => {
   const [openAuth, setOpenAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [articles, setArticles] = useState<ArticleDto[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('');
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const res = await fetch('https://localhost:7087/api/Article');
-        if (!res.ok) throw new Error('Failed to fetch articles');
-        const data = await res.json();
-        setArticles(data);
-      } catch (err) {
-        console.log('-----======---------======--------- LỖI: ', err);
-        setArticles([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchArticles();
-  }, []);
+  // Use SWR hook for data fetching with optional fallback data from SSR
+  const { articles, isLoading, isError, error } = useArticles(initialArticles);
 
   const handleCategorySelect = (category: { id: string; name: string; slug: string }) => {
     setActiveCategory(category.slug);
@@ -109,16 +95,59 @@ const HomePage = () => {
             description: a.description,
             imageUrl: cover || '/placeholder.jpg',
             tags: a.tags || [],
-            publishedAt: formatPublishedAt(a.createdAt),
+            publishedAt: formatPublishedAt(a.createdAt), // Human-readable format
+            publishedAtRaw: a.createdAt, // Original date for datetime attribute
             author: a.tags?.[0] || 'Admin',
-            commentCount: Math.floor(Math.random() * 50) + 1,
+            commentCount: 100,
             priority: a.priority,
           };
         })
       : sampleArticles;
 
   return (
-    <Box minHeight="100vh" bgcolor="#32363B">
+    <>
+      {/* SEO Head section */}
+      <Head>
+        <title>{seoData?.title || 'Tin tức bóng đá mới nhất - Football247'}</title>
+        <meta
+          name="description"
+          content={seoData?.description || 'Tin tức bóng đá mới nhất từ Premier League, Champions League và các giải đấu hàng đầu thế giới.'}
+        />
+        <meta name="keywords" content="bóng đá, football, Premier League, Champions League, tin tức thể thao, Football247" />
+        <meta name="author" content="Football247" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* Open Graph tags for social media */}
+        <meta property="og:title" content={seoData?.title || 'Tin tức bóng đá mới nhất - Football247'} />
+        <meta property="og:description" content={seoData?.description || 'Tin tức bóng đá mới nhất từ Premier League, Champions League và các giải đấu hàng đầu thế giới.'} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://football247.com" />
+        {seoData?.featuredImage && <meta property="og:image" content={seoData.featuredImage} />}
+        <meta property="og:site_name" content="Football247" />
+        <meta property="og:locale" content="vi_VN" />
+
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoData?.title || 'Tin tức bóng đá mới nhất - Football247'} />
+        <meta name="twitter:description" content={seoData?.description || 'Tin tức bóng đá mới nhất từ Premier League, Champions League và các giải đấu hàng đầu thế giới.'} />
+        {seoData?.featuredImage && <meta name="twitter:image" content={seoData.featuredImage} />}
+
+        {/* Additional SEO tags */}
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="Vietnamese" />
+        <meta name="revisit-after" content="1 days" />
+        <link rel="canonical" href="https://football247.com" />
+
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.svg" />
+        <link rel="mask-icon" href="/favicon.svg" color="#00d4aa" />
+
+        {/* Prevent favicon.ico 404 error */}
+        <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
+      </Head>
+
+      <Box minHeight="100vh" bgcolor="#32363B">
       <Header
         onCategorySelect={handleCategorySelect}
         activeCategory={activeCategory}
@@ -144,7 +173,7 @@ const HomePage = () => {
         >
           {/* Articles Section - 680px width for featured + regular articles */}
           <Box sx={{ width: { xs: '100%', md: '680px' }, flexShrink: 0 }}>
-            {loading ? (
+            {isLoading ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -175,6 +204,25 @@ const HomePage = () => {
                 <Typography color="white" variant="h6">
                   Please wait, loading news...
                 </Typography>
+              </Box>
+            ) : isError ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: 2,
+                  minHeight: '200px',
+                  flexDirection: 'column',
+                }}
+              >
+                <Typography color="error" variant="h6">
+                  Failed to load articles
+                </Typography>
+                <Typography color="white" variant="body2">
+                  {error?.message || 'Please try again later'}
+                </Typography>
+                <ArticleGrid articles={convertedArticles} />
               </Box>
             ) : (
               <ArticleGrid articles={convertedArticles} />
@@ -269,7 +317,45 @@ const HomePage = () => {
       {/* Footer Section */}
       <Footer />
     </Box>
+    </>
   );
+};
+
+// Server-Side Rendering function for SEO and performance
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
+  try {
+    // Fetch articles on the server
+    const articles = await fetcher('https://localhost:7087/api/Article');
+
+    // Generate SEO metadata based on articles
+    const seoData = {
+      title: `Tin tức bóng đá mới nhất - Football247 | ${new Date().toLocaleDateString('vi-VN')}`,
+      description: articles.length > 0
+        ? `Cập nhật tin tức bóng đá Premier League, Champions League mới nhất. ${articles[0].title.substring(0, 100)}...`
+        : 'Tin tức bóng đá mới nhất từ Premier League, Champions League và các giải đấu hàng đầu thế giới.',
+      featuredImage: articles.length > 0 ? articles[0].bgrImg : undefined
+    };
+
+    return {
+      props: {
+        initialArticles: articles,
+        seoData
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching articles in getServerSideProps:', error);
+
+    // Return empty data on error, SWR will handle client-side retry
+    return {
+      props: {
+        initialArticles: [],
+        seoData: {
+          title: 'Tin tức bóng đá mới nhất - Football247',
+          description: 'Tin tức bóng đá mới nhất từ Premier League, Champions League và các giải đấu hàng đầu thế giới.'
+        }
+      }
+    };
+  }
 };
 
 export default HomePage;
