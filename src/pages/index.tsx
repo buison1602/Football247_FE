@@ -89,11 +89,13 @@ const HomePage: React.FC<HomePageProps> = ({ initialArticles, seoData }) => {
     articles.length > 0
       ? articles.map((a) => {
           const cover = Array.isArray(a.bgrImg) ? a.bgrImg[0] : a.bgrImg;
+          // Use online placeholder image instead of local file to avoid 404 errors
+          const fallbackImage = 'https://images2.thanhnien.vn/528068263637045248/2024/2/19/ronaldo-17083595588871001421972.jpg';
           return {
             id: a.id,
             title: a.title,
             description: a.description,
-            imageUrl: cover || '/placeholder.jpg',
+            imageUrl: cover || fallbackImage,
             tags: a.tags || [],
             publishedAt: formatPublishedAt(a.createdAt), // Human-readable format
             publishedAtRaw: a.createdAt, // Original date for datetime attribute

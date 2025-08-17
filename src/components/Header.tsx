@@ -273,7 +273,7 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, activeCategory, onLog
                     sx={{
                       width: '1px',
                       height: '60px',
-                      bgcolor: 'rgba(255, 255, 255, 0.6)',
+                      bgcolor: 'rgba(255, 255, 255, 0.9)',
                       mr: 1,
                       alignSelf: 'stretch',
                       display: 'flex',
