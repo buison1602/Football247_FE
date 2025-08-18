@@ -8,7 +8,7 @@ import MailboxAdBanner2 from '../components/MailboxAdBanner2';
 import FixturesTable from '../components/FixturesTable';
 import ResultsTable from '../components/ResultsTable';
 import AuthDialog from '../components/AuthDialog';
-import Header from '../components/Header';
+import Header, { HeaderSpacer } from '../components/Header';
 import Banner from '../components/Banner';
 import ArticleGrid, { Article } from '../components/ArticleGrid';
 import Footer from '../components/Footer';
@@ -64,14 +64,13 @@ const mailboxData = [
 const HomePage: React.FC<HomePageProps> = ({ initialArticles, seoData }) => {
   const [openAuth, setOpenAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [activeCategory, setActiveCategory] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState<string>('home');
 
   // Use SWR hook for data fetching with optional fallback data from SSR
   const { articles, isLoading, isError, error } = useArticles(initialArticles);
 
   const handleCategorySelect = (category: { id: string; name: string; slug: string }) => {
     setActiveCategory(category.slug);
-    console.log('Selected category:', category);
   };
 
   const handleLoginClick = () => {
@@ -150,13 +149,14 @@ const HomePage: React.FC<HomePageProps> = ({ initialArticles, seoData }) => {
       </Head>
 
       <Box minHeight="100vh" bgcolor="#32363B">
-      <Header
-        onCategorySelect={handleCategorySelect}
-        activeCategory={activeCategory}
-        onLoginClick={handleLoginClick}
-        onSignupClick={handleSignupClick}
-      />
-      <Banner />
+        <Header
+          onCategorySelect={handleCategorySelect}
+          activeCategory={activeCategory}
+          onLoginClick={handleLoginClick}
+          onSignupClick={handleSignupClick}
+        />
+        <HeaderSpacer />
+        <Banner />
 
       {/* Background Wrapper for Main Content */}
       <Box sx={{ py: { xs: 3, md: 4 } }}>
