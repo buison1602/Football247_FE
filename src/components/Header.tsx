@@ -11,8 +11,11 @@ import {
   Menu,
   MenuItem,
   Divider,
-  SvgIcon 
+  SvgIcon,
+  CircularProgress,
+  Avatar
 } from '@mui/material';
+
 import {
   Menu as MenuIcon,
   Sports as SportsIcon,
@@ -20,6 +23,8 @@ import {
   Twitter as TwitterIcon,
   Instagram as InstagramIcon
 } from '@mui/icons-material';
+
+import { useAuth } from '../contexts/AuthContext'; // Đường dẫn có thể khác
 
 // Interfaces
 interface Category {
@@ -78,8 +83,27 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, activeCategory, onLog
   const dropdownButtonRef = useRef<HTMLButtonElement>(null);
   const menuCloseTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  // Lấy user và hàm logout từ context
+  const { user, logout, loading } = useAuth();
+
   // Computed state for dropdown open
   const dropdownOpen = Boolean(dropdownAnchor);
+
+  // Thêm state cho menu profile
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState<null | HTMLElement>(null);
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+      setProfileMenuAnchor(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+      setProfileMenuAnchor(null);
+  };
+
+  const handleLogout = () => {
+      logout();
+      handleProfileMenuClose();
+  };
 
   // Get the dropdown data for the current category
   const dropdownData = mainCategories.find(cat => cat.isDropdown);
@@ -173,22 +197,58 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, activeCategory, onLog
           </Box>
           
           {!isMobile && (
-            <Box display="flex" alignItems="center" gap={2}>
-              {/* SỬA LỖI 2: Thêm style đầy đủ cho nút Login Desktop */}
-              {onLoginClick && <Button variant="contained" onClick={onLoginClick} sx={{ bgcolor: '#00d4aa', fontSize: '0.85rem', px: 3, py: 1, borderRadius: '100vh', fontWeight: 600, textTransform: 'none', '&:hover': { bgcolor: '#00a37a', transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(0, 212, 170, 0.3)' }, transition: 'all 0.2s ease-in-out' }}>Login</Button>}
-              {/* SỬA LỖI 3: Thêm style đầy đủ cho nút Signup Desktop */}
-              {onSignupClick && <Button variant="outlined" onClick={handleSignupClick} sx={{ color: '#00d4aa', borderColor: '#00d4aa', fontSize: '0.85rem', px: 3, py: 1, borderRadius: '100vh', fontWeight: 600, textTransform: 'none', '&:hover': { bgcolor: '#00d4aa', color: 'white', transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(0, 212, 170, 0.3)' }, transition: 'all 0.2s ease-in-out' }}>Sign up</Button>}
-            </Box>
-          )}
-           {isMobile && (
-             <Box ml="auto" display="flex" alignItems="center" gap={1}>
-               {/* SỬA LỖI 4: Thêm style đầy đủ cho nút Login Mobile */}
-               {onLoginClick && <Button variant="contained" onClick={onLoginClick} size="small" sx={{ bgcolor: '#00d4aa', fontSize: '0.75rem', borderRadius: '100vh', '&:hover': { bgcolor: '#00a37a' } }}>Login</Button>}
-               {/* SỬA LỖI 5: Thêm style đầy đủ cho nút Signup Mobile */}
-               {onSignupClick && <Button variant="outlined" onClick={handleSignupClick} size="small" sx={{ color: '#00d4aa', borderColor: '#00d4aa', fontSize: '0.75rem', borderRadius: '100vh', '&:hover': { bgcolor: '#00d4aa', color: 'white' } }}>Sign up</Button>}
-               <IconButton color="inherit" onClick={handleMobileMenuOpen} sx={{ color: 'white' }}><MenuIcon /></IconButton>
-             </Box>
-           )}
+                        <Box display="flex" alignItems="center" gap={2}>
+                            {loading ? (
+                                <CircularProgress size={24} sx={{ color: '#00d4aa' }} />
+                            ) : user ? (
+                                <>
+                                    <Button
+                                        onClick={handleProfileMenuOpen}
+                                        sx={{ 
+                                            color: 'white', 
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                        }}
+                                        startIcon={<Avatar sx={{ width: 32, height: 32, bgcolor: '#00d4aa' }}>{user.fullName.charAt(0).toUpperCase()}</Avatar>}
+                                    >
+                                        {user.fullName}
+                                    </Button>
+                                    <Menu
+                                        anchorEl={profileMenuAnchor}
+                                        open={Boolean(profileMenuAnchor)}
+                                        onClose={handleProfileMenuClose}
+                                        disableScrollLock={true}
+                                    >
+                                        <MenuItem onClick={handleProfileMenuClose}>My Profile</MenuItem>
+                                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                    </Menu>
+                                </>
+                            ) : (
+                                <>
+                                    {onLoginClick && <Button variant="contained" onClick={onLoginClick} sx={{ bgcolor: '#00d4aa', /* ... */ }}>Login</Button>}
+                                    {onSignupClick && <Button variant="outlined" onClick={onSignupClick} sx={{ color: '#00d4aa', /* ... */ }}>Sign up</Button>}
+                                </>
+                            )}
+                        </Box>
+                    )}
+
+                    {isMobile && (
+                        <Box ml="auto" display="flex" alignItems="center" gap={1}>
+                            {loading ? (
+                                 <CircularProgress size={20} sx={{ color: '#00d4aa' }} />
+                            ) : user ? (
+                                <IconButton onClick={handleProfileMenuOpen}>
+                                    <Avatar sx={{ width: 28, height: 28, bgcolor: '#00d4aa' }}>{user.fullName.charAt(0).toUpperCase()}</Avatar>
+                                </IconButton>
+                            ) : (
+                                <>
+                                    {onLoginClick && <Button variant="contained" onClick={onLoginClick} size="small" sx={{ /* ... */ }}>Login</Button>}
+                                    {onSignupClick && <Button variant="outlined" onClick={onSignupClick} size="small" sx={{ /* ... */ }}>Sign up</Button>}
+                                </>
+                            )}
+                             <IconButton color="inherit" onClick={handleMobileMenuOpen} sx={{ color: 'white' }}><MenuIcon /></IconButton>
+                        </Box>
+                    )}
         </Box>
       </Box>
 

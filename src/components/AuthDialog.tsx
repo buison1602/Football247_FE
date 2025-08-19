@@ -23,6 +23,9 @@ import {
   FiberManualRecord,
   Google as GoogleIcon
 } from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext'; // Đường dẫn có thể khác
+import { loginUser, registerUser } from '../services/authService'; // Đường dẫn có thể khác
+
 
 interface AuthDialogProps {
   open: boolean;
@@ -88,6 +91,7 @@ const sliderData: SlideData[] = [
 const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'login' }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { login } = useAuth();
 
   // Form state
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
@@ -190,28 +194,25 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
     setErrors({});
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // TODO: Replace with actual API calls
+      // XÓA BỎ MÔ PHỎNG, THAY BẰNG GỌI API THẬT
+      let response;
       if (mode === 'login') {
-        console.log('Login attempt:', { email: formData.email, password: formData.password });
-        // Handle successful login
+        response = await loginUser(formData.email, formData.password);
       } else {
-        console.log('Signup attempt:', {
-          email: formData.email,
-          password: formData.password
-        });
-        // Handle successful signup
+        // API register sẽ tự động login sau khi thành công
+        response = await registerUser(formData.email, formData.password);
       }
 
-      // Close dialog on success
+      // Gọi hàm login từ context để cập nhật trạng thái toàn cục
+      login(response);
+
+      // Đóng dialog khi thành công
       onClose();
+
     } catch (error) {
+      // Hiển thị lỗi từ API
       setErrors({
-        general: mode === 'login'
-          ? 'Invalid email or password. Please try again.'
-          : 'Registration failed. Please try again.'
+        general: error instanceof Error ? error.message : 'An unknown error occurred.',
       });
     } finally {
       setLoading(false);
