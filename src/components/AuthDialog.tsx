@@ -31,7 +31,6 @@ interface AuthDialogProps {
 }
 
 interface FormData {
-  name: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -93,7 +92,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
   // Form state
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [formData, setFormData] = useState<FormData>({
-    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -123,7 +121,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
     if (open) {
       setMode(initialMode);
     } else {
-      setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+      setFormData({ email: '', password: '', confirmPassword: '' });
       setErrors({});
       setLoading(false);
       setCurrentSlide(0);
@@ -131,7 +129,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
   }, [open, initialMode]);
 
   useEffect(() => {
-    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+    setFormData({ email: '', password: '', confirmPassword: '' });
     setErrors({});
   }, [mode]);
 
@@ -155,12 +153,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
 
     // Signup-specific validation
     if (mode === 'signup') {
-      if (!formData.name) {
-        newErrors.name = 'Name is required';
-      } else if (formData.name.length < 2) {
-        newErrors.name = 'Name must be at least 2 characters long';
-      }
-
       if (!formData.confirmPassword) {
         newErrors.confirmPassword = 'Please confirm your password';
       } else if (formData.password !== formData.confirmPassword) {
@@ -207,7 +199,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
         // Handle successful login
       } else {
         console.log('Signup attempt:', {
-          name: formData.name,
           email: formData.email,
           password: formData.password
         });
@@ -351,53 +342,53 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
             </Box>
 
             {/* Modern Segmented Control Toggle */}
-<Box
-  sx={{
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 0.5,
-    bgcolor: '#1f2c39',
-    borderRadius: '999px',
-    p: 0.4,
-    mb: 3,
-    mx: 'auto',
-    boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    overflow: 'hidden'
-  }}
->
-  {['login', 'signup'].map((item) => (
-    <Button
-      key={item}
-      onClick={() => setMode(item as 'login' | 'signup')}
-      sx={{
-        px: 2.5, // 👈 padding ngang để nút dài hơn chữ 1 chút
-        py: 0.5, // 👈 padding dọc nhỏ
-        height: 32,
-        minWidth: 'unset', // 👈 không cho width cố định
-        whiteSpace: 'nowrap',
-        bgcolor: mode === item ? '#00d4aa' : 'transparent',
-        color: mode === item ? 'white' : 'rgba(255, 255, 255, 0.7)',
-        fontWeight: mode === item ? 600 : 500,
-        borderRadius: '999px',
-        textTransform: 'none',
-        fontSize: '0.9rem',
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {
-          bgcolor: mode === item ? '#00d4aa' : 'rgba(255, 255, 255, 0.05)',
-          color: 'white',
-          transform: 'scale(1.02)'
-        },
-        '&:active': {
-          transform: 'scale(0.98)'
-        }
-      }}
-    >
-      {item === 'login' ? 'Log In' : 'Sign Up'}
-    </Button>
-  ))}
-</Box>
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 0.5,
+                bgcolor: '#1f2c39',
+                borderRadius: '999px',
+                p: 0.4,
+                mb: 3,
+                mx: 'auto',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                overflow: 'hidden'
+              }}
+            >
+              {['login', 'signup'].map((item) => (
+                <Button
+                  key={item}
+                  onClick={() => setMode(item as 'login' | 'signup')}
+                  sx={{
+                    px: 2.5, // 👈 padding ngang để nút dài hơn chữ 1 chút
+                    py: 0.5, // 👈 padding dọc nhỏ
+                    height: 32,
+                    minWidth: 'unset', // 👈 không cho width cố định
+                    whiteSpace: 'nowrap',
+                    bgcolor: mode === item ? '#00d4aa' : 'transparent',
+                    color: mode === item ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                    fontWeight: mode === item ? 600 : 500,
+                    borderRadius: '999px',
+                    textTransform: 'none',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      bgcolor: mode === item ? '#00d4aa' : 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      transform: 'scale(1.02)'
+                    },
+                    '&:active': {
+                      transform: 'scale(0.98)'
+                    }
+                  }}
+                >
+                  {item === 'login' ? 'Log In' : 'Sign Up'}
+                </Button>
+              ))}
+            </Box>
 
 
             {/* Error Alert */}
@@ -419,54 +410,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
 
             {/* Form */}
             <Box component="form" onSubmit={handleSubmit}>
-              {/* Name Field (Signup only) */}
-              {mode === 'signup' && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      mb: 1,
-                      fontSize: '0.875rem',
-                      fontWeight: 500
-                    }}
-                  >
-                    Full Name
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.name}
-                    onChange={handleInputChange('name')}
-                    error={!!errors.name}
-                    helperText={errors.name}
-                    placeholder="Enter your full name"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        height: '44px',
-                        bgcolor: '#1f2c39',
-                        '& fieldset': {
-                          borderColor: 'rgba(255, 255, 255, 0.2)'
-                        },
-                        '&:hover fieldset': {
-                          borderColor: 'rgba(255, 255, 255, 0.3)'
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#00d4aa'
-                        }
-                      },
-                      '& .MuiInputBase-input': {
-                        color: 'white',
-                        padding: '10px 14px'
-                      },
-                      '& .MuiInputBase-input::placeholder': {
-                        color: 'rgba(255, 255, 255, 0.5)',
-                        opacity: 1
-                      }
-                    }}
-                  />
-                </Box>
-              )}
-
               {/* Email Field */}
               <Box sx={{ mb: 2 }}>
                 <Typography
@@ -668,7 +611,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({ open, onClose, initialMode = 'l
                 {loading ? (
                   <CircularProgress size={24} sx={{ color: 'white' }} />
                 ) : (
-                  mode === 'login' ? 'Log In' : 'Create Account'
+                  mode === 'login' ? 'Log In' : 'Sign Up'
                 )}
               </Button>
 
